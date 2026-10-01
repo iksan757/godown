@@ -8,14 +8,15 @@ Fast video download in cli environment, light and friendly
 
 ```
 pkg update && pkg upgrade -y && pkg install golang aria2 git && gitclone github/iksan757/vidown.git
-cd vidown && go mod tidy && go build -o vidown main.go
-cp vidown $PREFIX/bin/ && chmod x+ $PREFIX/bin/vidown
+cd godown && go mod tidy && ./build.sh
+
+cp godown $PREFIX/bin/ && chmod x+ $PREFIX/bin/godown
 
 ```
  
 ## Dependency
-- golang
-- aria2
+- `golang`
+- `aria2`
 
 ## For Support
 *  Treat me to coffee ☕: [Treat](https://saweria.co/tuanmuda7)
