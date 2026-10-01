@@ -12,7 +12,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
-        "crypto/sha256"
+    "crypto/sha256"
 )
 
 
@@ -29,7 +29,7 @@ func verifyIntegrity() bool {
 }
 
 
-// List keyword pengabaian (preview/thumb/ads)
+
 var ignoreKeywords = []string{"preview", "thumb", "sample", "trailer", "poster", "advert"}
 
 func isIgnored(link string) bool {
@@ -68,15 +68,15 @@ func fetchHTML(targetURL, referer string) (string, error) {
 	return string(body), nil
 }
 
-// Universal Scraper Engine
+
 func extractUniversalMediaURL(pageURL string) (string, error) {
 	html, err := fetchHTML(pageURL, pageURL)
 	if err != nil {
-		return "", fmt.Errorf("gagal mengambil halaman: %w", err)
+		return "", fmt.Errorf("ERROR FAILED: %w", err)
 	}
 
-	// STAGE 1: Cek Tag <video> atau <source>
-	fmt.Println("  [Stage 1] Memindai Tag <video> / <source>...")
+	
+	fmt.Println("  [Stage 1] scanning <video> / <source>...")
 	reVideo := regexp.MustCompile(`(?i)<(?:video|source)[^>]+src=["']([^"']+)["']`)
 	matchesVideo := reVideo.FindAllStringSubmatch(html, -1)
 	for _, m := range matchesVideo {
@@ -85,8 +85,8 @@ func extractUniversalMediaURL(pageURL string) (string, error) {
 		}
 	}
 
-	// STAGE 2: Cek Variabel JavaScript Player (JWPlayer, Video.js, Clappr, HLS.js)
-	fmt.Println("  [Stage 2] Memindai Variabel JS Player (file:, source:, src:)...")
+	// checking 
+	fmt.Println("  [Stage 2] Scanning variable (file:, source:, src:)...")
 	reJS := regexp.MustCompile(`(?i)(?:file|source|src|url|playlist)\s*:\s*["']([^"']+\.(?:mp4|m3u8)[^"']*)["']`)
 	matchesJS := reJS.FindAllStringSubmatch(html, -1)
 	for _, m := range matchesJS {
@@ -98,18 +98,18 @@ func extractUniversalMediaURL(pageURL string) (string, error) {
 		}
 	}
 
-	// STAGE 3: Cek <iframe> embed player & Scrape Iframe tersebut
-	fmt.Println("  [Stage 3] Memindai Tag <iframe> Embed...")
+	// checking 
+	fmt.Println("  [Stage 3] Scanning Tags <iframe> Embed...")
 	reIframe := regexp.MustCompile(`(?i)<iframe[^>]+src=["']([^"']+)["']`)
 	matchesIframe := reIframe.FindAllStringSubmatch(html, -1)
 	for _, m := range matchesIframe {
 		if len(m) > 1 {
 			iframeURL := fixURL(m[1], pageURL)
 			if !isIgnored(iframeURL) && strings.HasPrefix(iframeURL, "http") {
-				fmt.Printf("   -> Ditemukan iframe: %s (Mencoba scraping iframe...)\n", iframeURL)
+				fmt.Printf("   -> Find iframe: %s (Mencoba scraping iframe...)\n", iframeURL)
 				iframeHTML, err := fetchHTML(iframeURL, pageURL)
 				if err == nil {
-					// Cari stream di dalam iframe
+				
 					reIframeMedia := regexp.MustCompile(`https?://[^"'\s\\]+\.(?:mp4|m3u8)[^"'\s\\]*`)
 					if media := reIframeMedia.FindString(iframeHTML); media != "" && !isIgnored(media) {
 						return media, nil
@@ -119,7 +119,7 @@ func extractUniversalMediaURL(pageURL string) (string, error) {
 		}
 	}
 
-	// STAGE 4: Fallback Regex Pola .mp4 atau .m3u8 umum
+	
 	fmt.Println("  [Stage 4] Fallback Scanning Link .mp4 / .m3u8...")
 	reGeneral := regexp.MustCompile(`https?://[^"'\s\\]+\.(?:mp4|m3u8)[^"'\s\\]*`)
 	matchesGeneral := reGeneral.FindAllString(html, -1)
@@ -130,10 +130,10 @@ func extractUniversalMediaURL(pageURL string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("tidak dapat menemukan link stream video di situs ini")
+	return "", fmt.Errorf("NO LINKS")
 }
 
-// Normalisasi URL relatif menjadi URL absolut
+
 func fixURL(target, base string) string {
 	target = strings.TrimSpace(target)
 	if strings.HasPrefix(target, "//") {
@@ -160,16 +160,14 @@ func promptInput(reader *bufio.Reader, promptText string) string {
 }
 
 func main() {
-        // 🔒 1. PROTEKSI HASH & BRANDING (Tambahkan di paling atas)
+    
         if !verifyIntegrity() {
-                fmt.Println("❌ [ERROR] Modifikasi ilegal terdeteksi! Nama pembuat asli telah diubah.")
+                fmt.Println("❌ [ERROR ")
                 os.Exit(1)
         }
         fmt.Printf("⚡ Powered by %s (%s)\n\n", AppName, Author)
 
-        // ----------------------------------------------------
-        // 🚀 2. LOGIKA UTAMA (Kode Asli Kamu)
-        // ----------------------------------------------------
+        
         if len(os.Args) < 2 {
                 fmt.Println("use: godown <URL_WEBSITE>")
                 return
