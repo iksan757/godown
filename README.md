@@ -14,7 +14,7 @@ cp godown $PREFIX/bin/ && chmod x+ $PREFIX/bin/godown
 
 ```
  
-## Dependency
+## Depends
 - `golang`
 - `aria2`
 
