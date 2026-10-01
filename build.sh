@@ -7,7 +7,7 @@ echo "⚡ Building godown binary..."
 OUTPUT_BINARY="godown"
 
 #
-AUTHOR_NAME="Iksan  rumasoreng"
+AUTHOR_NAME="Iksan rumasoreng"
 
 #
 LDFLAGS="-s -w -X 'main.AppName=godown' -X 'main.Author=${AUTHOR_NAME}' -X 'main.Version=1.0.0'"
